@@ -1,1 +1,3 @@
 luma.led_matrix
+numpy
+pillow
