@@ -9,12 +9,12 @@ from src.element import AIPaddle, Ball, Paddle
 
 
 def main():
-    # init()
     FPS = 60
     WIDTH = 16
     HEIGHT = 8
     frame_count = 0
 
+    device = init()
     ball = Ball(WIDTH // 2 - 1, HEIGHT // 2 - 1, 2 / FPS, 2 / FPS)
     paddle_0 = AIPaddle(0, HEIGHT // 2, 15 / FPS, screen_height=HEIGHT)
     paddle_x = AIPaddle(WIDTH - 1, HEIGHT // 2, 15 / FPS, screen_height=HEIGHT)
@@ -24,7 +24,7 @@ def main():
         ball.draw(matrix)
         paddle_0.draw(matrix)
         paddle_x.draw(matrix)
-        matrix_display(None, matrix.T)
+        matrix_display(device, matrix.T)
 
         # Update
         ball.update(WIDTH, HEIGHT, paddle_0=paddle_0, paddle_x=paddle_x)
@@ -38,6 +38,7 @@ def init():
     serial = spi(port=0, device=0, gpio=noop())
     device = max7219(serial, cascaded=2, block_orientation=90, rotate=0)
     device.contrast(5)
+    return device
 
 
 def matrix_display(device, matrix):
