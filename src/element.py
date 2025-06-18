@@ -10,6 +10,9 @@ class Ball:
         self.dx_init = dx
         self.dy_init = dy
 
+        self.score_0 = 0
+        self.score_x = 0
+
     def update(self, screen_width, screen_height, paddle_0=None, paddle_x=None):
         board_width_0 = 0 if paddle_0 is None else 1
         board_width_x = 0 if paddle_x is None else 1
@@ -31,7 +34,13 @@ class Ball:
                 if paddle_0.y - 1 <= self.y <= paddle_0.y + 1:
                     self.bounce_horizontal()
                 else:
-                    self.reset(screen_width // 2 - 1, screen_height // 2 - 1, abs(self.dx_init), self.dy_init * random.choice([-1, 1]))
+                    self.score_x += 1
+                    self.reset(
+                        screen_width // 2 - 1,
+                        screen_height // 2 - 1,
+                        abs(self.dx_init),
+                        self.dy_init * random.choice([-1, 1]),
+                    )
             else:
                 self.bounce_horizontal()
                 self.x = board_width_0
@@ -41,23 +50,34 @@ class Ball:
                 if paddle_x.y - 1 <= self.y <= paddle_x.y + 1:
                     self.bounce_horizontal()
                 else:
-                    self.reset(screen_width // 2 - 1, screen_height // 2 - 1, -abs(self.dx_init), self.dy_init * random.choice([-1, 1]))
+                    self.score_0 += 1
+                    self.reset(
+                        screen_width // 2 - 1,
+                        screen_height // 2 - 1,
+                        -abs(self.dx_init),
+                        self.dy_init * random.choice([-1, 1]),
+                    )
             else:
                 self.bounce_horizontal()
                 self.x = screen_width - 1 - board_width_x
                 self.y = round(self.y)
 
-
     def draw(self, matrix):
         x = round(self.x)
         y = round(self.y)
         matrix[x][y] = 1
-    
+
     def reset(self, x, y, dx, dy):
         self.x = x
         self.y = y
         self.dx = dx
         self.dy = dy
+        score_text = "Score: Player 0: {}, Player X: {}".format(
+            self.score_0, self.score_x
+        )
+        print(score_text)
+        with open("score.log", "a+") as f:
+            f.write(score_text + "\n")
 
     def bounce_vertical(self):
         if abs(self.dx) > 8 * abs(self.dx_init):
@@ -73,6 +93,7 @@ class Ball:
             self.dx *= -1.1
             self.dy *= 1.1
 
+
 class Paddle:
     def __init__(self, x, y, dy, screen_height=8):
         self.screen_height = screen_height
@@ -81,7 +102,7 @@ class Paddle:
         self.y = y
         self.dy = dy
 
-    def update(self, input_y = None):
+    def update(self, input_y=None):
         if input_y is None:
             self.y += random.choice([-1, 1]) * self.dy
         else:
@@ -90,12 +111,13 @@ class Paddle:
             elif input_y < 0:
                 self.y -= self.dy
         self.y = max(1, min(self.y, self.screen_height - 2))
-    
+
     def draw(self, matrix):
         y = round(self.y)
         matrix[self.x][y - 1] = 1
         matrix[self.x][y] = 1
         matrix[self.x][y + 1] = 1
+
 
 class AIPaddle(Paddle):
     def update(self, ball):
