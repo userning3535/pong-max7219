@@ -12,15 +12,16 @@ def main():
     FPS = 60
     WIDTH = 16
     HEIGHT = 8
-    frame_count = 0
 
     device = init()
     ball = Ball(WIDTH // 2 - 1, HEIGHT // 2 - 1, 2 / FPS, 2 / FPS)
-    paddle_0 = AIPaddle(0, HEIGHT // 2, 15 / FPS, screen_height=HEIGHT)
-    paddle_x = AIPaddle(WIDTH - 1, HEIGHT // 2, 15 / FPS, screen_height=HEIGHT)
+    paddle_0 = AIPaddle(0, HEIGHT // 2, 10 / FPS, screen_height=HEIGHT)
+    paddle_x = AIPaddle(WIDTH - 1, HEIGHT // 2, 10 / FPS, screen_height=HEIGHT)
     while True:
         # Draw everything
-        matrix = np.zeros((WIDTH, HEIGHT))
+        matrix = np.array(
+            [[0 for _ in range(HEIGHT)] for _ in range(WIDTH)], dtype=np.uint8
+        )
         ball.draw(matrix)
         paddle_0.draw(matrix)
         paddle_x.draw(matrix)
@@ -36,7 +37,7 @@ def main():
 def init():
     # Setup
     serial = spi(port=0, device=0, gpio=noop())
-    device = max7219(serial, cascaded=2, block_orientation=90, rotate=0)
+    device = max7219(serial, cascaded=2, block_orientation=180)
     device.contrast(5)
     return device
 
