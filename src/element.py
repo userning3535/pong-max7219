@@ -106,9 +106,9 @@ class Paddle:
         if input_y is None:
             self.y += random.choice([-1, 1]) * self.dy
         else:
-            if input_y > 0:
+            if input_y > 2.6:
                 self.y += self.dy
-            elif input_y < 0:
+            elif input_y < 2.4:
                 self.y -= self.dy
         self.y = max(1, min(self.y, self.screen_height - 2))
 
